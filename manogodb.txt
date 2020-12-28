@@ -1,0 +1,40 @@
+
+## to create or use existing database
+use db_name;
+
+## to show the available databases with collections
+show dbs;
+
+## to create a collection
+db.createCollection("person_details");
+
+## to insert a document 
+db.person_details.insert(
+    {
+    "fname":"cheruku",
+    "lname":"priyanka"
+    })
+
+## to view all the documents of a collection
+db.person_details.find().pretty()
+
+## to update the existing document
+##db.collection_name.update(condition for selection, updation)
+db.person_details.update(
+    {"lname":"priyanka"},           
+    {$set:{"lname":"Priyanka"}}     
+)
+
+## to insert extra info into a document
+db.person_details.update(
+    {"lname":"Priyanka"},
+    {
+        $set:{"year":"2020"}
+    },{$upsert:true}
+
+)
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+# to get all the documents
+db.person_details.find()
+{ "_id" : ObjectId("5fe9ef78d5ed8281bfe71bb5"), "fname" : "cheruku", "lname" : "Priyanka", "year" : "2020" }
