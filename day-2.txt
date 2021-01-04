@@ -1,0 +1,133 @@
+## check the status
+$ service mongod status
+
+## start the service
+$ sudo systemctl start mongod
+
+## to connect to mongod
+$ mongo
+MongoDB shell version v4.4.2
+connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("463b883f-ca7c-4429-a88d-00ce07485e97") }
+MongoDB server version: 4.4.2
+
+## create or use the existing database
+> use person
+switched to db person
+
+## create a collection
+> db.createCollection("cars")
+{ "ok" : 1 }
+
+# insert values using loops
+> for(var i=0;i<10;i++) { db.cars.insert({"car_name":"car"+i}) }
+WriteResult({ "nInserted" : 1 })
+
+> db.cars.find()
+{ "_id" : ObjectId("5ff2dae018b0f08138244ad2"), "car_name" : "car0" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244ad3"), "car_name" : "car1" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244ad4"), "car_name" : "car2" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244ad5"), "car_name" : "car3" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244ad6"), "car_name" : "car4" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244ad7"), "car_name" : "car5" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244ad8"), "car_name" : "car6" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244ad9"), "car_name" : "car7" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244ada"), "car_name" : "car8" }
+{ "_id" : ObjectId("5ff2dae018b0f08138244adb"), "car_name" : "car9" }
+
+
+## create database
+> db.createCollection("dataTypes")
+{ "ok" : 1 }
+
+## insert a number
+> db.dataTypes.insert({"number":1})
+WriteResult({ "nInserted" : 1 })
+
+## insert  a string and array
+> db.dataTypes.insert({"string":"name","array":[1,2,3]})
+WriteResult({ "nInserted" : 1 })
+> db.dataTypes.find()
+{ "_id" : ObjectId("5ff2dd0918b0f08138244adc"), "number" : 1 }
+{ "_id" : ObjectId("5ff2dd4618b0f08138244add"), "string" : "name", "array" : [ 1, 2, 3 ] }
+
+## insert a boolean
+> db.dataTypes.insert({"boolean":true})
+WriteResult({ "nInserted" : 1 })
+
+### insert another number
+> db.dataTypes.insert({"number":5})
+WriteResult({ "nInserted" : 1 })
+
+## find available numbers  greater than 3
+> db.dataTypes.find({"number":{$gt:3}})
+{ "_id" : ObjectId("5ff2de8218b0f08138244adf"), "number" : 5 }
+
+## find available numbers  less than 3
+> db.dataTypes.find({"number":{$lt:3}})
+{ "_id" : ObjectId("5ff2dd0918b0f08138244adc"), "number" : 1 }
+
+## find wheather the number  exist in array
+> db.dataTypes.find({"array":{$in:[4]}})
+> db.dataTypes.find({"array":{$in:[3]}})
+{ "_id" : ObjectId("5ff2dd4618b0f08138244add"), "string" : "name", "array" : [ 1, 2, 3 ] }
+> db.dataTypes.find({"number":{$in:[3]}})
+> db.dataTypes.find({"number":{$in:[5]}})
+{ "_id" : ObjectId("5ff2de8218b0f08138244adf"), "number" : 5 }
+
+## sort numbers
+> db.dataTypes.find({"number":{$gt:0}}).sort({"numbers":1})
+{ "_id" : ObjectId("5ff2dd0918b0f08138244adc"), "number" : 1 }
+{ "_id" : ObjectId("5ff2de8218b0f08138244adf"), "number" : 5 }
+> db.dataTypes.find({"number":{$gt:0}}).sort({"numbers":0})
+Error: error: {
+	"ok" : 0,
+	"errmsg" : "$sort key ordering must be 1 (for ascending) or -1 (for descending)",
+	"code" : 15975,
+	"codeName" : "Location15975"
+}
+> db.dataTypes.find({"number":{$gt:0}}).sort({"numbers":-1})
+{ "_id" : ObjectId("5ff2dd0918b0f08138244adc"), "number" : 1 }
+{ "_id" : ObjectId("5ff2de8218b0f08138244adf"), "number" : 5 }
+
+
+### every thing in a pretty format
+> db.dataTypes.find().pretty()
+{ "_id" : ObjectId("5ff2dd0918b0f08138244adc"), "number" : 1 }
+{
+	"_id" : ObjectId("5ff2dd4618b0f08138244add"),
+	"string" : "name",
+	"array" : [
+		1,
+		2,
+		3
+	]
+}
+{ "_id" : ObjectId("5ff2dd7118b0f08138244ade"), "boolean" : true }
+{ "_id" : ObjectId("5ff2de8218b0f08138244adf"), "number" : 5 }
+
+## filtering thing using AND condition
+> db.dataTypes.find({$and : [{"array":1},{"string":"name"}]}).pretty()
+{
+	"_id" : ObjectId("5ff2dd4618b0f08138244add"),
+	"string" : "name",
+	"array" : [
+		1,
+		2,
+		3
+	]
+}
+
+## filtering thing using OR condition
+> db.dataTypes.find({$or : [{"number":5},{"string":"name"}]}).pretty()
+{
+	"_id" : ObjectId("5ff2dd4618b0f08138244add"),
+	"string" : "name",
+	"array" : [
+		1,
+		2,
+		3
+	]
+}
+{ "_id" : ObjectId("5ff2de8218b0f08138244adf"), "number" : 5 }
+
